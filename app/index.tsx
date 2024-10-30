@@ -21,7 +21,7 @@ export default function App() {
       const subscription = await Location.watchPositionAsync(
         {
           accuracy: Location.Accuracy.High,
-          timeInterval: 500, // Update every 5 seconds
+          timeInterval: 500, // Update every 0.5 seconds
           distanceInterval: 10, // Update every 10 meters
         },
         (newLocation) => {
@@ -34,19 +34,15 @@ export default function App() {
     })();
   }, []);
 
-  let text = "Waiting..";
-  if (errorMsg) {
-    text = errorMsg;
-  } else if (location) {
-    text = JSON.stringify(location);
-  }
-
   return (
     <View style={styles.container}>
       <Text style={styles.paragraph}>{errorMsg}</Text>
-      <Text style={styles.paragraph}>{text}</Text>
-      <Text style={styles.paragraph}>{latitude}</Text>
-      <Text style={styles.paragraph}>{longitude}</Text>
+      <Text style={styles.paragraph}>
+        Latitude: {latitude ?? "Cant access Latitude"}
+      </Text>
+      <Text style={styles.paragraph}>
+        Longitude: {longitude ?? "Cant access Longitude"}
+      </Text>
     </View>
   );
 }
