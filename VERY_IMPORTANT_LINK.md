@@ -1,0 +1,1 @@
+[Locations in React](https://theexpertdeveloper.medium.com/how-to-implement-live-location-tracking-in-react-native-725dca135e43)
