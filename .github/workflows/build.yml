@@ -23,11 +23,11 @@ jobs:
       - name: Setup Environment (PR)
         if: ${{ github.event_name == 'pull_request' }}
         shell: bash
-        run: echo "sha_short=$(git rev-parse --short ${{ github.event.pull_request.base.sha }})" >> $GITHUB_OUTPUT
+        run: echo "SHA_SHORT=$(git rev-parse --short ${{ github.event.pull_request.base.sha }})" >> $GITHUB_ENV
       - name: Setup Environment (Push)
         if: ${{ github.event_name == 'push' }}
         shell: bash
-        run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+        run: echo "SHA_SHORT=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
 
       - name: Check out Git repository
         uses: actions/checkout@v4
@@ -63,7 +63,7 @@ jobs:
         id: upload-debug
         uses: actions/upload-artifact@v4
         with:
-          name: app-release-${{ env.sha_short }}
+          name: app-debug-${SHA_SHORT}
           path: android/app/build/outputs/apk/debug/*.apk
 
       - name: Build Release APK
@@ -75,15 +75,15 @@ jobs:
         id: upload-release
         uses: actions/upload-artifact@v4
         with:
-          name: app-debug-${{ env.sha_short }}
+          name: app-release-${SHA_SHORT}
           path: android/app/build/outputs/apk/release/*.apk
 
       - name: Comment on PR
         uses: marocchino/sticky-pull-request-comment@v2
         with:
           message: |
-            [Download Debug APK](${{ steps.upload-debug.outputs.artifact_url }})
+            [Download Debug APK](${{ steps.upload-debug.outputs.artifact-url }})
             
-            [Download Release APK](${{ steps.upload-release.outputs.artifact_url }})
+            [Download Release APK](${{ steps.upload-release.outputs.artifact-url }})
             
             > Latest commit: [${{ env.sha_short }}](https://github.com/${{ github.repository }}/commit/${{ github.event.pull_request.base.sha }})            
