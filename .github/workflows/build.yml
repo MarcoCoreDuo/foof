@@ -55,8 +55,9 @@ jobs:
         run: chmod +x android/gradlew
 
       - name: Build Debug APK
+        working-directory: android
         run:
-          ./android/gradlew assembleDebug
+          ./gradlew assembleDebug
 
       - name: Upload Debug APK
         id: upload-debug
@@ -66,8 +67,9 @@ jobs:
           path: android/app/build/outputs/apk/debug/*.apk
 
       - name: Build Release APK
+        working-directory: android
         run:
-          ./android/gradlew assembleRelease
+          ./gradlew assembleRelease
 
       - name: Upload Release APK
         id: upload-release
