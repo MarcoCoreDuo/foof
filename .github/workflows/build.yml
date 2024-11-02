@@ -15,7 +15,7 @@ jobs:
     name: Build Android
     runs-on: ubuntu-latest
     env:
-      GRADLE_OPTS: "-Xmx8g -XX:MaxMetaspaceSize=1024m"
+      GRADLE_OPTS: "-Xmx16g -XX:MaxMetaspaceSize=1024m"
     permissions:
       pull-requests: write
 
