@@ -47,7 +47,7 @@ jobs:
         run: npm install
 
       - name: Generate build files
-        run:
+        run: |
           npx expo prebuild --platform android
           cd android
 
