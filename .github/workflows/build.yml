@@ -49,10 +49,12 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: '17'
-          cache: 'gradle'
 
-      - name: Grant execute permission for gradlew
-        run: chmod +x android/gradlew
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Verify SHA_SHORT
+        run: echo "SHA_SHORT is $SHA_SHORT"
 
       - name: Build Debug APK
         working-directory: android
