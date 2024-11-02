@@ -40,9 +40,7 @@ jobs:
         run: npm install
 
       - name: Generate build files
-        run: |
-          npx expo prebuild --platform android
-          cd android
+        run: npx expo prebuild --platform android
 
       - name: Setup JDK 17
         uses: actions/setup-java@v4
@@ -52,9 +50,11 @@ jobs:
           cache: 'gradle'
 
       - name: Grant execute permission for gradlew
+        working-directory: ./android
         run: chmod +x gradlew
 
       - name: Build Debug APK
+        working-directory: ./android
         run:
           ./gradlew assembleDebug
 
@@ -63,7 +63,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: app-release-${{ env.sha_short }}
-          path: app/build/outputs/apk/debug/*.apk
+          path: ./android/app/build/outputs/apk/debug/*.apk
 
       - name: Build Release APK
         run:
@@ -74,7 +74,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: app-debug-${{ env.sha_short }}
-          path: app/build/outputs/apk/release/*.apk
+          path: ./android/app/build/outputs/apk/release/*.apk
 
       - name: Comment on PR
         uses: marocchino/sticky-pull-request-comment@v2
