@@ -23,11 +23,11 @@ jobs:
       - name: Setup Environment (PR)
         if: ${{ github.event_name == 'pull_request' }}
         shell: bash
-        run: echo "SHA_SHORT=$(git rev-parse --short ${{ github.event.pull_request.base.sha }})" >> $GITHUB_ENV
+        run: echo "SHA_SHORT=$(echo ${{ github.event.pull_request.base.sha }} | cut -c1-7)" >> $GITHUB_ENV
       - name: Setup Environment (Push)
         if: ${{ github.event_name == 'push' }}
         shell: bash
-        run: echo "SHA_SHORT=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+        run: echo "SHA_SHORT=$(echo ${{ github.sha }} | cut -c1-7)" >> $GITHUB_ENV
 
       - name: Check out Git repository
         uses: actions/checkout@v4
@@ -52,9 +52,6 @@ jobs:
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
-
-      - name: Verify SHA_SHORT
-        run: echo "SHA_SHORT is $SHA_SHORT"
 
       - name: Build Debug APK
         working-directory: android
