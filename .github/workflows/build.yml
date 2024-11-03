@@ -14,8 +14,6 @@ jobs:
   build-android-debug:
     name: Build Android Debug
     runs-on: ubuntu-latest
-    permissions:
-      pull-requests: write
 
     steps:
       - name: Setup Environment (PR)
@@ -26,7 +24,6 @@ jobs:
         if: ${{ github.event_name == 'push' }}
         shell: bash
         run: echo "SHA_SHORT=$(echo ${{ github.sha }} | cut -c1-7)" >> $GITHUB_ENV
-
       - name: Check out Git repository
         uses: actions/checkout@v4
 
@@ -59,26 +56,14 @@ jobs:
           ./gradlew assembleDebug "-Dorg.gradle.jvmargs=-Xmx4g -XX:MaxMetaspaceSize=512m"
 
       - name: Upload Debug APK
-        id: upload-debug
         uses: actions/upload-artifact@v4
         with:
           name: app-debug-${{ env.SHA_SHORT }}
-          path: android/app/build/outputs/apk/debug/*.apk
-
-      - name: Comment on PR
-        uses: marocchino/sticky-pull-request-comment@v2
-        with:
-          append: true
-          message: |
-            [Download Debug APK](${{ steps.upload-debug.outputs.artifact-url }})
-            
-            > Latest commit: [${{ env.SHA_SHORT }}](https://github.com/${{ github.repository }}/commit/${{ github.event.pull_request.head.sha }}) 
+          path: android/app/build/outputs/apk/debug/*.apk 
             
   build-android-release:
     name: Build Android Release
     runs-on: ubuntu-latest
-    permissions:
-      pull-requests: write
 
     steps:
       - name: Setup Environment (PR)
@@ -122,18 +107,32 @@ jobs:
           ./gradlew assembleRelease "-Dorg.gradle.jvmargs=-Xmx4g -XX:MaxMetaspaceSize=512m"
 
       - name: Upload Release APK
-        id: upload-debug
         uses: actions/upload-artifact@v4
         with:
           name: app-release-${{ env.SHA_SHORT }}
           path: android/app/build/outputs/apk/release/*.apk
 
+  comment-on-pr:
+    if: github.event_name == 'pull_request'
+    name: Comment on PR
+    runs-on: ubuntu-latest
+    needs: [build-android-debug, build-android-release]
+    permissions:
+      pull-requests: write
+
+    steps:
+      - name: Get short SHA
+        if: ${{ github.event_name == 'pull_request' }}
+        shell: bash
+        run: echo "SHA_SHORT=$(echo ${{ github.event.pull_request.head.sha }} | cut -c1-7)" >> $GITHUB_ENV
+        
       - name: Comment on PR
         uses: marocchino/sticky-pull-request-comment@v2
         with:
-          append: true
           message: |
+            [Download Debug APK](${{ needs.build-android-debug.outputs.artifact-url }})
       
-            [Download Release APK](${{ steps.upload-release.outputs.artifact-url }})
+            [Download Release APK](${{ needs.build-android-release.outputs.artifact-url }})
             
             > Latest commit: [${{ env.SHA_SHORT }}](https://github.com/${{ github.repository }}/commit/${{ github.event.pull_request.head.sha }})
+      
