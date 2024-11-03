@@ -14,8 +14,6 @@ jobs:
   build-android:
     name: Build Android
     runs-on: ubuntu-latest
-    env:
-      GRADLE_OPTS: "-Xmx16g -XX:MaxMetaspaceSize=1024m"
     permissions:
       pull-requests: write
 
@@ -56,7 +54,7 @@ jobs:
       - name: Build Debug APK
         working-directory: android
         run:
-          ./gradlew assembleDebug
+          ./gradlew assembleDebug "-Dorg.gradle.jvmargs=-Xmx4g -XX:MaxPermSize=512m"
 
       - name: Upload Debug APK
         id: upload-debug
@@ -68,7 +66,7 @@ jobs:
       - name: Build Release APK
         working-directory: android
         run:
-          ./gradlew assembleRelease
+          ./gradlew assembleRelease "-Dorg.gradle.jvmargs=-Xmx4g -XX:MaxPermSize=512m"
 
       - name: Upload Release APK
         id: upload-release
