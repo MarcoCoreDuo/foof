@@ -54,7 +54,7 @@ jobs:
       - name: Build Debug APK
         working-directory: android
         run:
-          ./gradlew assembleDebug "-Dorg.gradle.jvmargs=-Xmx4g -XX:MaxPermSize=512m"
+          ./gradlew assembleDebug "-Dorg.gradle.jvmargs=-Xmx4g -XX:MaxMetaspaceSize=512m"
 
       - name: Upload Debug APK
         id: upload-debug
@@ -66,7 +66,7 @@ jobs:
       - name: Build Release APK
         working-directory: android
         run:
-          ./gradlew assembleRelease "-Dorg.gradle.jvmargs=-Xmx4g -XX:MaxPermSize=512m"
+          ./gradlew assembleRelease "-Dorg.gradle.jvmargs=-Xmx4g -XX:MaxMetaspaceSize=512m"
 
       - name: Upload Release APK
         id: upload-release
