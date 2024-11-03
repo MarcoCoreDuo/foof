@@ -12,7 +12,7 @@ on:
 
 jobs:
   build-android-debug:
-    name: Build Android
+    name: Build Android Debug
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
@@ -115,6 +115,18 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
         with:
           cache-read-only: ${{ github.ref != 'refs/heads/main' && github.ref != 'refs/heads/develop' }}
+
+      - name: Build Release APK
+        working-directory: android
+        run:
+          ./gradlew assembleRelease "-Dorg.gradle.jvmargs=-Xmx4g -XX:MaxMetaspaceSize=512m"
+
+      - name: Upload Release APK
+        id: upload-debug
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release-${{ env.SHA_SHORT }}
+          path: android/app/build/outputs/apk/release/*.apk
 
       - name: Comment on PR
         uses: marocchino/sticky-pull-request-comment@v2
