@@ -14,6 +14,8 @@ jobs:
   build-android-debug:
     name: Build Android Debug
     runs-on: ubuntu-latest
+    outputs:
+      debug-artifact-url: ${{ steps.upload-debug.outputs.artifact-url }}
 
     steps:
       - name: Setup Environment (PR)
@@ -56,6 +58,7 @@ jobs:
           ./gradlew assembleDebug "-Dorg.gradle.jvmargs=-Xmx4g -XX:MaxMetaspaceSize=512m"
 
       - name: Upload Debug APK
+        id: upload-debug
         uses: actions/upload-artifact@v4
         with:
           name: app-debug-${{ env.SHA_SHORT }}
@@ -64,6 +67,8 @@ jobs:
   build-android-release:
     name: Build Android Release
     runs-on: ubuntu-latest
+    outputs:
+      release-artifact-url: ${{ steps.upload-release.outputs.artifact-url }}
 
     steps:
       - name: Setup Environment (PR)
@@ -107,6 +112,7 @@ jobs:
           ./gradlew assembleRelease "-Dorg.gradle.jvmargs=-Xmx4g -XX:MaxMetaspaceSize=512m"
 
       - name: Upload Release APK
+        id: upload-release
         uses: actions/upload-artifact@v4
         with:
           name: app-release-${{ env.SHA_SHORT }}
@@ -130,9 +136,9 @@ jobs:
         uses: marocchino/sticky-pull-request-comment@v2
         with:
           message: |
-            [Download Debug APK](${{ needs.build-android-debug.outputs.artifact-url }})
+            [Download Debug APK](${{ needs.build-android-debug.outputs.debug-artifact-url }})
       
-            [Download Release APK](${{ needs.build-android-release.outputs.artifact-url }})
+            [Download Release APK](${{ needs.build-android-release.outputs.release-artifact-url }})
             
             > Latest commit: [${{ env.SHA_SHORT }}](https://github.com/${{ github.repository }}/commit/${{ github.event.pull_request.head.sha }})
       
