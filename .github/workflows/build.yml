@@ -21,7 +21,7 @@ jobs:
       - name: Setup Environment (PR)
         if: ${{ github.event_name == 'pull_request' }}
         shell: bash
-        run: echo "SHA_SHORT=$(echo ${{ github.event.pull_request.base.sha }} | cut -c1-7)" >> $GITHUB_ENV
+        run: echo "SHA_SHORT=$(echo ${{ github.event.pull_request.head.sha }} | cut -c1-7)" >> $GITHUB_ENV
       - name: Setup Environment (Push)
         if: ${{ github.event_name == 'push' }}
         shell: bash
@@ -50,6 +50,9 @@ jobs:
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-read-only: ${{ github.ref != 'refs/heads/main' && github.ref != 'refs/heads/develop' }}
+
 
       - name: Build Debug APK
         working-directory: android
@@ -83,4 +86,4 @@ jobs:
             
             [Download Release APK](${{ steps.upload-release.outputs.artifact-url }})
             
-            > Latest commit: [${{ env.SHA_SHORT }}](https://github.com/${{ github.repository }}/commit/${{ github.event.pull_request.base.sha }})            
+            > Latest commit: [${{ env.SHA_SHORT }}](https://github.com/${{ github.repository }}/commit/${{ github.event.pull_request.head.sha }})            
